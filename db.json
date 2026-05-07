@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "nome": "",
+      "email": ""
+    }
+  ],
+  "preventivi": [
+    {
+      "messaggio": ""
+    }
+  ],
+  "recensioni": [
+    {
+      "nome": "",
+      "testo": ""
+    }
+  ]
+}

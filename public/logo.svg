@@ -1,0 +1,19 @@
+<svg width="260" height="70" viewBox="0 0 260 70" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- fundo elegante -->
+  <rect x="1" y="4" width="60" height="60" rx="8" fill="#3d7bb8"/>
+
+  <!-- ícone construção refinado -->
+  <path d="M20 40 L30 25 L40 40" stroke="white" stroke-width="2" fill="none"/>
+  <rect x="26" y="35" width="8" height="12" fill="white"/>
+
+  <!-- texto -->
+  <text x="75" y="35" font-family="Georgia" font-size="35" fill="#192e42">
+    Alves
+  </text>
+
+  <text x="70" y="55" font-family="Arial" font-size="17" fill="#3498db" letter-spacing="4">
+    DESIGN
+  </text>
+
+</svg>
