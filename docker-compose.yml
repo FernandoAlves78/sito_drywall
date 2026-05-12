@@ -1,0 +1,92 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: drywall-app
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    environment:
+      PHP_IDE_CONFIG: "serverName=drywall"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mailhog:
+        condition: service_started
+    networks:
+      - drywall
+
+  mysql:
+    image: mysql:8.0
+    container_name: drywall-mysql
+    restart: unless-stopped
+    command: --default-authentication-plugin=caching_sha2_password
+    environment:
+      MYSQL_DATABASE: drywall
+      MYSQL_USER: drywall
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: rootsecret
+    ports:
+      - "13306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootsecret"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - drywall
+
+  node:
+    image: node:22-alpine
+    container_name: drywall-node
+    working_dir: /var/www/html
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - app
+    networks:
+      - drywall
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: drywall-mailhog
+    restart: unless-stopped
+    ports:
+      - "11025:1025"
+      - "18025:8025"
+    networks:
+      - drywall
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: drywall-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: drywall
+      PMA_PASSWORD: secret
+      UPLOAD_LIMIT: 64M
+    ports:
+      - "8081:80"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - drywall
+
+volumes:
+  dbdata:
+    driver: local
+
+networks:
+  drywall:
+    driver: bridge

@@ -1,4 +1,20 @@
+import './bootstrap';
+import '../css/app.css';
+
 const phoneNumber = '393291238688';
+
+function getCsrfToken() {
+  return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
+}
+
+function jsonHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'X-CSRF-TOKEN': getCsrfToken(),
+    'X-Requested-With': 'XMLHttpRequest',
+  };
+}
 
 function openImg(img) {
   const lightbox = document.getElementById('lightbox');
@@ -24,8 +40,8 @@ async function sendQuote() {
   try {
     const res = await fetch('/preventivo', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone, email, message })
+      headers: jsonHeaders(),
+      body: JSON.stringify({ name, phone, email, message }),
     });
     if (!res.ok) {
       console.warn('Preventivo: risposta HTTP', res.status);
@@ -74,8 +90,8 @@ async function sendReview() {
 
   await fetch('/recensioni', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome: name, testo: text })
+    headers: jsonHeaders(),
+    body: JSON.stringify({ nome: name, testo: text }),
   });
 
   document.getElementById('review-name').value = '';
@@ -125,13 +141,13 @@ function renderReviewGrid(reviews) {
 
 async function loadReviews() {
   try {
-    const res = await fetch('/recensioni');
+    const res = await fetch('/recensioni', { headers: { Accept: 'application/json' } });
     const data = await res.json();
     const filtered = Array.isArray(data) ? data.filter(r => r.nome && r.testo) : [];
 
     if (filtered.length === 0) {
       renderReviewGrid([
-        { nome: 'Alves Drywall', testo: 'Ancora non ci sono recensioni. Sii il primo a commentare!' }
+        { nome: 'Alves Drywall', testo: 'Ancora non ci sono recensioni. Sii il primo a commentare!' },
       ]);
       return;
     }
@@ -140,7 +156,7 @@ async function loadReviews() {
   } catch (error) {
     renderReviewGrid([
       { nome: 'Mario Rossi', testo: 'Eccellente lavoro di drywall e pittura. Professionale e puntuale. Consigliato!' },
-      { nome: 'Laura Bianchi', testo: 'Servizio di alta qualità. Hanno rifatto il mio appartamento con grande attenzione ai dettagli.' }
+      { nome: 'Laura Bianchi', testo: 'Servizio di alta qualità. Hanno rifatto il mio appartamento con grande attenzione ai dettagli.' },
     ]);
   }
 }
@@ -212,6 +228,13 @@ function updateScrollTopVisibility() {
   const isAtTop = window.scrollY <= 10;
   button.classList.toggle('is-hidden', isAtTop);
 }
+
+window.openImg = openImg;
+window.closeImg = closeImg;
+window.sendQuote = sendQuote;
+window.sendQuoteEmail = sendQuoteEmail;
+window.sendWhatsAppForm = sendWhatsAppForm;
+window.sendReview = sendReview;
 
 window.addEventListener('DOMContentLoaded', () => {
   const y = document.getElementById('footer-year');
