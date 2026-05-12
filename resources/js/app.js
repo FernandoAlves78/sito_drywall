@@ -3,6 +3,32 @@ import '../css/app.css';
 
 const phoneNumber = '393291238688';
 
+function showToast(message, type = 'success') {
+  return new Promise(resolve => {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toast-container';
+      document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add('toast-visible'));
+
+    setTimeout(() => {
+      toast.classList.remove('toast-visible');
+      toast.addEventListener('transitionend', () => {
+        toast.remove();
+        resolve();
+      });
+    }, 4000);
+  });
+}
+
 function getCsrfToken() {
   return document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 }
@@ -27,15 +53,22 @@ function closeImg() {
 }
 
 async function sendQuote() {
+  const btn = document.querySelector('.contact-form .button-primary');
   const name = document.getElementById('quote-name').value.trim();
-  const phone = document.getElementById('quote-phone').value.trim();
+  const phoneRaw = document.getElementById('quote-phone').value.trim();
+  const phone = phoneRaw ? `+39${phoneRaw}` : '';
   const email = document.getElementById('quote-email').value.trim();
   const message = document.getElementById('quote-message').value.trim();
 
-  if (!name || !phone || !message) {
-    alert('Per favore, compila nome, telefono e descrizione del servizio.');
+  if (!name || !phoneRaw || !message) {
+    btn.disabled = true;
+    await showToast('Per favore, compila nome, telefono e descrizione del servizio.', 'error');
+    btn.disabled = false;
     return;
   }
+
+  btn.disabled = true;
+  btn.classList.add('is-loading');
 
   try {
     const res = await fetch('/preventivo', {
@@ -50,16 +83,21 @@ async function sendQuote() {
     console.warn('Preventivo: invio non riuscito (rete o server non disponibile).', err);
   }
 
-  alert('Richiesta di preventivo inviata con successo!');
+  btn.classList.remove('is-loading');
+
   document.getElementById('quote-name').value = '';
   document.getElementById('quote-phone').value = '';
   document.getElementById('quote-email').value = '';
   document.getElementById('quote-message').value = '';
+
+  await showToast('Richiesta di preventivo inviata con successo!');
+  btn.disabled = false;
 }
 
 function sendQuoteEmail() {
   const name = document.getElementById('quote-name').value.trim();
-  const phone = document.getElementById('quote-phone').value.trim();
+  const phoneRaw = document.getElementById('quote-phone').value.trim();
+  const phone = phoneRaw ? `+39 ${phoneRaw}` : '';
   const email = document.getElementById('quote-email').value.trim();
   const message = document.getElementById('quote-message').value.trim();
 
@@ -72,7 +110,8 @@ function sendQuoteEmail() {
 
 function sendWhatsAppForm() {
   const name = document.getElementById('quote-name').value.trim();
-  const phone = document.getElementById('quote-phone').value.trim();
+  const phoneRaw = document.getElementById('quote-phone').value.trim();
+  const phone = phoneRaw ? `+39 ${phoneRaw}` : '';
   const message = document.getElementById('quote-message').value.trim();
 
   const text = `Ciao, mi chiamo ${name || 'cliente'}.\nTelefono: ${phone || 'non fornito'}\n\nVorrei un preventivo per:\n${message || '...'}`;
@@ -245,6 +284,55 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   updateScrollTopVisibility();
   window.addEventListener('scroll', updateScrollTopVisibility, { passive: true });
+
+  const quoteNameInput = document.getElementById('quote-name');
+  quoteNameInput?.addEventListener('focusout', function () {
+    if (/\d/.test(this.value)) {
+      this.setCustomValidity('Il nome non può contenere numeri.');
+      this.reportValidity();
+      return;
+    }
+    if (this.value.replace(/[^a-zA-ZÀ-ÿ]/g, '').length < 3) {
+      this.setCustomValidity('Il nome deve contenere almeno 3 lettere.');
+      this.reportValidity();
+      return;
+    }
+    this.setCustomValidity('');
+    this.value = this.value.replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+  });
+
+  const quotePhoneInput = document.getElementById('quote-phone');
+  quotePhoneInput?.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '');
+  });
+  quotePhoneInput?.addEventListener('focusout', function () {
+    const digits = this.value.replace(/\D/g, '');
+    if (digits.length > 0 && (digits.length < 9 || digits.length > 10)) {
+      this.setCustomValidity('Il numero deve avere 9 o 10 cifre (es. 329 123 8688).');
+      this.reportValidity();
+      return;
+    }
+    this.setCustomValidity('');
+    if (digits.length === 10) {
+      this.value = `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
+    } else if (digits.length === 9) {
+      this.value = `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
+    }
+  });
+
+  const quoteEmailInput = document.getElementById('quote-email');
+  quoteEmailInput?.addEventListener('focusout', function () {
+    const val = this.value.trim();
+    if (!val) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!emailRegex.test(val)) {
+      this.setCustomValidity('Inserisci un indirizzo email valido (es. nome@email.com).');
+      this.reportValidity();
+      return;
+    }
+    this.setCustomValidity('');
+    this.value = val.toLowerCase();
+  });
 
   loadReviews();
   activateFadeEffects();

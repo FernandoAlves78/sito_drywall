@@ -92,6 +92,50 @@ button:active {
   box-shadow: 0 8px 32px rgba(61, 123, 184, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.25);
 }
 
+.button-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-spinner {
+  display: none;
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+
+.btn-loading {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+}
+
+.is-loading .btn-label {
+  display: none;
+}
+
+.is-loading .btn-loading {
+  display: inline-flex;
+}
+
+.is-loading .btn-spinner {
+  display: inline-block;
+}
+
+.is-loading {
+  min-width: 180px;
+  opacity: 0.75;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Glass — secondario (navy traslucido) */
 .button-secondary {
   background: rgba(255, 255, 255, 0.38);
@@ -538,6 +582,60 @@ main {
   resize: vertical;
 }
 
+.phone-field {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(25, 46, 66, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin-bottom: 16px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.phone-field:focus-within {
+  border-color: rgba(61, 123, 184, 0.45);
+  box-shadow: 0 0 0 3px rgba(61, 123, 184, 0.15);
+}
+
+.phone-prefix {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 0 16px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+}
+
+.flag-it {
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.phone-field input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 16px 18px 16px 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  margin-bottom: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.phone-field input:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
 .form-actions {
   display: flex;
   flex-wrap: wrap;
@@ -702,6 +800,50 @@ main {
 .whatsapp-float svg {
   display: block;
   flex-shrink: 0;
+}
+
+#toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  max-width: 380px;
+  padding: 14px 22px;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #fff;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.toast-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast-success {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.92), rgba(5, 150, 105, 0.88));
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.toast-error {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.92), rgba(220, 38, 38, 0.88));
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 @media (max-width: 980px) {

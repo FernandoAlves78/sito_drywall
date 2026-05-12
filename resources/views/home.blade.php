@@ -107,11 +107,14 @@
       <div class="contact-grid">
         <div class="contact-card contact-form">
           <input id="quote-name" type="text" placeholder="Nome" />
-          <input id="quote-phone" type="text" placeholder="Telefono / WhatsApp" />
+          <div class="phone-field">
+            <span class="phone-prefix"><svg class="flag-it" viewBox="0 0 30 20" width="24" height="16" aria-hidden="true"><rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce2b37"/></svg>+39</span>
+            <input id="quote-phone" type="tel" inputmode="numeric" placeholder="Numero di telefono" maxlength="12" />
+          </div>
           <input id="quote-email" type="email" placeholder="Email" />
           <textarea id="quote-message" rows="5" placeholder="Descrivi il servizio o l'ambiente desiderato"></textarea>
           <div class="form-actions">
-            <button class="button button-primary" onclick="sendQuote()">Invia preventivo</button>
+            <button class="button button-primary" onclick="sendQuote()"><span class="btn-label">Invia preventivo</span><span class="btn-loading"><span class="btn-spinner"></span> Invio in corso…</span></button>
           </div>
         </div>
       </div>
