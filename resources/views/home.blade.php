@@ -8,18 +8,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
+  @vite(['resources/js/site.js'])
 </head>
 <body>
   <header class="topbar">
     <a href="{{ url('/') }}" class="brand brand-link" aria-label="Alves Drywall — inizio pagina">
-      <img src="{{ asset('logo.svg') }}" width="200" height="54" alt="Alves Drywall & Pittura" class="brand-logo">
+      <img src="{{ asset('logo.png') }}" width="200" height="54" alt="Alves Drywall & Pittura" class="brand-logo">
     </a>
     <nav class="menu">
       <a href="#galeria">Galeria</a>
       <a href="#servizi">Servizi</a>
       <a href="#recensioni">Recensioni</a>
       <a href="#contatto">Contatto</a>
+      <a href="{{ route('login') }}" class="button button-primary" style="padding:10px 22px;font-size:.88rem">Login</a>
     </nav>
   </header>
 
@@ -109,7 +110,7 @@
           <input id="quote-name" type="text" placeholder="Nome" />
           <div class="phone-field">
             <span class="phone-prefix"><svg class="flag-it" viewBox="0 0 30 20" width="24" height="16" aria-hidden="true"><rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ce2b37"/></svg>+39</span>
-            <input id="quote-phone" type="tel" inputmode="numeric" placeholder="Numero di telefono" maxlength="12" />
+            <input id="quote-phone" type="tel" inputmode="numeric" placeholder="Numero di telefono *" maxlength="12" required aria-required="true" />
           </div>
           <input id="quote-email" type="email" placeholder="Email" />
           <textarea id="quote-message" rows="5" placeholder="Descrivi il servizio o l'ambiente desiderato"></textarea>
@@ -126,7 +127,7 @@
       <div class="footer-unified glass-panel">
         <div class="footer-columns">
           <div class="footer-col footer-col-logo">
-            <img src="{{ asset('logo.svg') }}" width="180" height="48" alt="" class="footer-logo" decoding="async">
+            <img src="{{ asset('logo.png') }}" width="180" height="48" alt="" class="footer-logo" decoding="async">
           </div>
           <div class="footer-col">
             <p>+39 329 123 8688</p>
